@@ -82,7 +82,7 @@ class HmacTest : public RWUserSessionTest,
   HmacTest()
     : attrs_({CKA_SIGN, CKA_VERIFY}),
       info_(kHmacInfo[GetParam()]),
-      keylen_(1 + (std::rand() % 63)),
+      keylen_(16 + (std::rand() % 63)),
       key_data_(randmalloc(keylen_)),
       key_(INVALID_OBJECT_HANDLE),
       datalen_(1 + std::rand() % 1024),
@@ -209,6 +209,8 @@ TEST_F(RWUserSessionTest, HmacTestVectors) {
     HmacInfo info = kHmacInfo[kv.first];
     for (const TestData& testcase : kv.second) {
       string key = hex_decode(testcase.key);
+      if(key.length() < 16)
+        key.append(16 - key.length(), 0); // Depends on the fact that trailing zeros don't affect the HMAC value
       CK_OBJECT_CLASS key_class = CKO_SECRET_KEY;
       CK_KEY_TYPE key_type = CKK_GENERIC_SECRET;
       if(kv.first == "SHA1-HMAC") {
