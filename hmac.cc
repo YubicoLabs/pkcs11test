@@ -82,7 +82,7 @@ class HmacTest : public RWUserSessionTest,
   HmacTest()
     : attrs_({CKA_SIGN, CKA_VERIFY}),
       info_(kHmacInfo[GetParam()]),
-      keylen_(16 + (std::rand() % 63)),
+      keylen_(16 + (std::rand() % (64 - 16))),
       key_data_(randmalloc(keylen_)),
       key_(INVALID_OBJECT_HANDLE),
       datalen_(1 + std::rand() % 1024),
